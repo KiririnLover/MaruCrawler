@@ -49,7 +49,7 @@ if sys.platform.startswith('win'):
 
 class MaruCrawler():
     def __init__(self, processNum = 4):
-        self.version = "2.00"
+        self.version = "2.01"
         self.logger = CreateLogger("MaruCrawler")
         self.processNum = processNum
         self.driverPath = os.path.realpath('phantomjs.exe')
