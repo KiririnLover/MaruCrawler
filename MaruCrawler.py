@@ -115,6 +115,9 @@ class MaruCrawler():
                 continue
             print("EpisodeName : %s, URL : %s" % (episode["episodeName"], episode["url"]))
             imageList = self.GetImageLists(episode["episodeName"], episode["url"])
+            if imageList == False:
+                self.logger.info("Can't download episode ( EpisodeName : %s, URL : %s )" % (episode["episodeName"], episode["url"]))
+                continue
             for imageData in imageList:
                 taskQueue.put(imageData)
 
