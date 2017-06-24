@@ -223,6 +223,8 @@ class MaruCrawler():
                     episodeName = ValidateFileName(i.text.strip())
                     if episodeName == "":  # Duplicate
                         continue
+                    if "\xa0" in episodeName:
+                        episodeName = episodeName.replace('\xa0', ' ')
                     episodeList.append({"episodeName":episodeName, "url":i['href']})
             except:  # 'a' tag without 'href'
                 continue
