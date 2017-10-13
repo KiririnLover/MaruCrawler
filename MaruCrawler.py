@@ -49,7 +49,7 @@ if sys.platform.startswith('win'):
 
 class MaruCrawler():
     def __init__(self, processNum = 4):
-        self.version = "2.01"
+        self.version = "2.10"
         self.logger = CreateLogger("MaruCrawler")
         self.processNum = processNum
         self.driverPath = os.path.realpath('phantomjs.exe')
@@ -74,6 +74,7 @@ class MaruCrawler():
 
     def Run(self, mangaNumber):
         # Check files
+        self.logger.info("Start Download Manga : %d" % mangaNumber)
         if not os.path.exists(self.driverPath):
             self.logger.error("WebDriverNotFound ( path : %s )" % (self.driverPath))
             return False
@@ -223,8 +224,14 @@ class MaruCrawler():
                     episodeName = ValidateFileName(i.text.strip())
                     if episodeName == "":  # Duplicate
                         continue
+                    
+                    # Replace FileName
+
                     if "\xa0" in episodeName:
                         episodeName = episodeName.replace('\xa0', ' ')
+                    if "\u2013" in episodeName:
+                        episodeName = episodeName.replace('\u2013', '-')
+
                     episodeList.append({"episodeName":episodeName, "url":i['href']})
             except:  # 'a' tag without 'href'
                 continue
@@ -244,6 +251,9 @@ class MaruCrawler():
         return False
 
 if __name__ == "__main__":
+    mangaNumber = None
+    mangaList   = None
+
     multiprocessing.freeze_support()
     crawler = MaruCrawler(processNum = 4)
     crawler.PrintBanner()
@@ -260,10 +270,20 @@ if __name__ == "__main__":
 
     if select == 1:
         try:
-            mangaNumber = int(input(" Input Manga ID : "))
+            mangaNumber = input(" Input Manga ID (multiple input should be splited with comma): ")
+            if "," in mangaNumber:
+                mangaList = [int(i.strip()) for i in mangaNumber.split(",")]
+            else:
+                mangaNumber = int(mangaNumber)
         except:
-            print(" Please input only integer")
+            print(" Please input correctly")
+            print("   One Manga Download : <Integer>")
+            print("   Multiple Manga Download : <Integer>, <Integer>, <Integer>...")
         else:
-            crawler.Run(mangaNumber)
+            if mangaList == None:
+                crawler.Run(mangaNumber)
+            else:
+                for mangaNum in mangaList:
+                    crawler.Run(mangaNum)
     elif select == 2:
         crawler.UpdateManga()
