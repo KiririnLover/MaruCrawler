@@ -49,13 +49,13 @@ if sys.platform.startswith('win'):
 
 class MaruCrawler():
     def __init__(self, processNum = 4):
-        self.version = "2.10"
+        self.version = "2.11"
         self.logger = CreateLogger("MaruCrawler")
         self.processNum = processNum
         self.driverPath = os.path.realpath('phantomjs.exe')
         self.opener = urllib.request.build_opener()
         self.opener.addheaders = [('User-Agent', "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36")]
-        self.mainURL = "http://marumaru.in/b/mangaup/"
+        self.mainURL = "http://marumaru.in/?c=1/40&uid="
 
     def PrintBanner(self):
         banner = """
