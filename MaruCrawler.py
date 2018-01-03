@@ -49,7 +49,7 @@ if sys.platform.startswith('win'):
 
 class MaruCrawler():
     def __init__(self, processNum = 4):
-        self.version = "2.11"
+        self.version = "2.12"
         self.logger = CreateLogger("MaruCrawler")
         self.processNum = processNum
         self.driverPath = os.path.realpath('phantomjs.exe')
@@ -152,17 +152,16 @@ class MaruCrawler():
 
     def GetImageLists(self, episodeName, targetURL):
         imageList = []
-
         # Try 5 times
         caps = DesiredCapabilities.PHANTOMJS
-        caps["phantomjs.page.settings.userAgent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36"
+        caps["phantomjs.page.settings.userAgent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36"
         driver = webdriver.PhantomJS(self.driverPath, desired_capabilities=caps)
         driver.set_page_load_timeout(60)  # 60 seconds timeout
         for i in range(5):
             try:
                 driver.get(targetURL)
             except Exception as e:
-                self.logger.error("EpisodeLoadError ( episodeName : %s, url : %s ). Retry..." % (episodeName, targetURL))
+                self.logger.error("EpisodeLoadError ( episodeName : %s, url : %s, why : %s ). Retry..." % (episodeName, targetURL, str(e)))
                 if i == 4:
                     # Exception Occured 5 times
                     return False
@@ -231,6 +230,8 @@ class MaruCrawler():
                         episodeName = episodeName.replace('\xa0', ' ')
                     if "\u2013" in episodeName:
                         episodeName = episodeName.replace('\u2013', '-')
+                    if "\ufeff" in episodeName:
+                        episodeName = episodeName.replace('\ufeff', '')
 
                     episodeList.append({"episodeName":episodeName, "url":i['href']})
             except:  # 'a' tag without 'href'

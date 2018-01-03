@@ -9,7 +9,7 @@ class ImageDownloader():
     def __init__(self):
         self.logger = CreateLogger("ImageDownloader")
         self.opener = urllib.request.build_opener()
-        self.opener.addheaders = [('User-Agent', "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36")]
+        self.opener.addheaders = [('Accept','text/html, application/xhtml+xml, image/jxr, */*'), ('Accept-Language', 'ko,ja;q=0.5'), ('User-Agent', "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36"), ('Accept-Encoding', 'gzip, deflate')]
 
     def DownloadImage(self, targetURL, savePath):
         for i in range(3):
@@ -17,7 +17,7 @@ class ImageDownloader():
                 self.logger.debug("DownloadImage Started ( url : %s, savePath : %s ) " % (targetURL, savePath))
                 source = self.opener.open(targetURL, timeout=10).read()
             except Exception as e:
-                self.logger.error("DownloadImageError ( url : %s, savePath : %s )" % (targetURL, savePath))
+                self.logger.error("DownloadImageError ( url : %s, savePath : %s, why : %s )" % (targetURL, savePath, str(e)))
                 continue
             else:
                 Mkdirs(savePath)
