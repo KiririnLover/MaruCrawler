@@ -49,7 +49,7 @@ if sys.platform.startswith('win'):
 
 class MaruCrawler():
     def __init__(self, processNum = 4):
-        self.version = "2.12"
+        self.version = "2.13"
         self.logger = CreateLogger("MaruCrawler")
         self.processNum = processNum
         self.driverPath = os.path.realpath('phantomjs.exe')
@@ -181,12 +181,12 @@ class MaruCrawler():
         # Images with a Tag
         aTagList = source.find_all('a',
             {
-                "href": lambda L: L and (L.startswith('http://www.yuncomics.com/wp-content') or L.startswith('http://wasabisyrup.com/storage/gallery/') or
-                ".jpg" in L.lower() or ".png" in L.lower() or ".jpeg" in L.lower() or ".gif" in L.lower() or ".bmp" in L.lower())
+                "href": lambda L: L and (L.startswith('http://www.yuncomics.com/wp-content') or L.startswith('http://wasabisyrup.com/storage/gallery/')) and
+                (".jpg" in L.lower() or ".png" in L.lower() or ".jpeg" in L.lower() or ".gif" in L.lower() or ".bmp" in L.lower())
              }
         )
         for aTagNum in range(len(aTagList)):
-            imageList.append({"url":aTagList[aTagNum]['href']})
+            imageList.append({"url":aTagList[aTagNum]['href'], "referer": currentURL})
 
         # Images without a Tag
         if len(aTagList) == 0:
@@ -203,9 +203,9 @@ class MaruCrawler():
                     tmpURL = tmpURL.split("?")[0]
 
                 if "yuncomics" in tmpURL:
-                    imageList.append({"url":tmpURL})
-                elif ("wasabisyrup" in targetURL or "wasabisyrup" in currentURL)  and (".jpg" in tmpURL.lower() or ".png" in tmpURL.lower() or ".jpeg" in tmpURL.lower() or ".gif" in tmpURL.lower() or ".bmp" in tmpURL.lower()):
-                    imageList.append({"url":"http://wasabisyrup.com" + tmpURL})
+                    imageList.append({"url":tmpURL, "referer": currentURL})
+                elif ("wasabisyrup" in targetURL or "wasabisyrup" in currentURL) and not ( tmpURL.startswith("http") ) and (".jpg" in tmpURL.lower() or ".png" in tmpURL.lower() or ".jpeg" in tmpURL.lower() or ".gif" in tmpURL.lower() or ".bmp" in tmpURL.lower()):
+                    imageList.append({"url":"http://wasabisyrup.com" + tmpURL, "referer": currentURL})
 
         imageList = RemoveDuplicate(imageList)
         for imageNum in range(len(imageList)):
